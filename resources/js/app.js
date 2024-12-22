@@ -2,6 +2,7 @@ import "./bootstrap";
 
 import { createApp } from "vue";
 import Scroller from "./components/Scroller.vue";
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const app = createApp({});
 
