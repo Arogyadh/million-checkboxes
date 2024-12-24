@@ -9,8 +9,24 @@ let items = [...Array(1000000).keys()].map((index) => {
     };
 });
 
+const setItemsState = (id, checked) => {
+    items[id - 1].checked = checked;
+    renderKey.value = Date.now();
+};
+
 const gridItems = ref(32);
 const itemSize = ref(1232 / gridItems.value);
+const renderKey = ref(Date.now());
+
+const channel = Echo.private("checkboxes");
+
+channel.listenForWhisper("CheckboxUpdated", (e) => {
+    setItemsState(e.id, e.checked);
+});
+
+const toggle = (id, checked) => {
+    channel.whisper("CheckboxUpdated", { id, checked });
+};
 </script>
 
 <template>
@@ -19,10 +35,16 @@ const itemSize = ref(1232 / gridItems.value);
         :items="items"
         :item-size="itemSize"
         :grid-items="gridItems"
+        :key="renderKey"
     >
         <template #default="{ item }">
             <div class="h-full flex items-center justify-center">
-                <input type="checkbox" class="size-6" :checked="item.checked" />
+                <input
+                    type="checkbox"
+                    class="size-6"
+                    :checked="item.checked"
+                    v-on:change="toggle(item.id, $event.target.checked)"
+                />
             </div>
         </template>
     </RecycleScroller>
