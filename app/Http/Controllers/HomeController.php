@@ -12,7 +12,6 @@ class HomeController extends Controller
 
         $state = (new Checkboxes());
 
-        // dd($state);
         return view('home', [
             'count' => $state->count(),
             'state' => $state->all(),

@@ -1,11 +1,23 @@
 <script setup>
 import { RecycleScroller } from "vue-virtual-scroller";
 import { ref } from "vue";
+import Bitset from "bitset";
+
+const props = defineProps({
+    state: String,
+    count: Number,
+});
+
+const bitset = new Bitset();
+
+for (let i = 0; i < props.state.length; i++) {
+    bitset.set(i, Number(props.state.charAt(i)));
+}
 
 let items = [...Array(1000000).keys()].map((index) => {
     return {
         id: index + 1,
-        checked: false,
+        checked: bitset.get(index + 1),
     };
 });
 
@@ -35,10 +47,12 @@ const toggle = (id, checked) => {
         :items="items"
         :item-size="itemSize"
         :grid-items="gridItems"
-        :key="renderKey"
     >
         <template #default="{ item }">
-            <div class="h-full flex items-center justify-center">
+            <div
+                class="h-full flex items-center justify-center"
+                :key="renderKey"
+            >
                 <input
                     type="checkbox"
                     class="size-6"
