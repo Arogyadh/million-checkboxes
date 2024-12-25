@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Broadcast;
 
 Auth::login(new User());
 
+
 Broadcast::channel('checkboxes', function (User $user) {
     return true;
 });

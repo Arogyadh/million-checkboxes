@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\Checkboxes;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -29,6 +30,6 @@ class HandleStateUpdate
         }
 
         //update in redis db
-        \Log::info("updated in redis db");
+        (new Checkboxes())->set($data->id, (int) $data->checked);
     }
 }

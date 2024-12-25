@@ -50,8 +50,4 @@ const toggle = (id, checked) => {
     </RecycleScroller>
 </template>
 
-<style scoped>
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-</style>
+<style scoped></style>
