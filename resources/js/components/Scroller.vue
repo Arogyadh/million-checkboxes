@@ -30,6 +30,8 @@ let items = [...Array(1000000).keys()].map((index) => {
 const setItemsState = (id, checked) => {
     items[id - 1].checked = checked;
     renderKey.value = Date.now();
+
+    counts.value += checked ? 1 : -1;
 };
 
 // Refs for scroller configuration
@@ -37,12 +39,15 @@ const scroller = ref(null);
 const gridItems = ref(32);
 const itemSize = ref(1232 / gridItems.value);
 const renderKey = ref(Date.now());
+const counts = ref(props.count);
+const boxNavigateTo = ref(null);
 
 // Handle resize to adjust grid layout
 const onResize = () => {
     const { width } = useElementBounding(scroller);
     gridItems.value = Math.floor(width.value / itemSize.value);
 };
+onResize();
 
 // Setup private websocket channel
 const channel = Echo.private("checkboxes");
@@ -55,10 +60,34 @@ channel.listenForWhisper("CheckboxUpdated", (e) => {
 // Broadcast checkbox changes to other clients
 const toggle = (id, checked) => {
     channel.whisper("CheckboxUpdated", { id, checked });
+    setItemsState(id, checked);
+};
+
+//Box navigation
+const navigateToBox = () => {
+    scroller.value.scrollToItem(boxNavigateTo.value);
 };
 </script>
 
 <template>
+    <div class="flex items-center justify-between mb-6">
+        <div>Count : {{ counts }}</div>
+        <div>
+            <form
+                class="flex items-center space-x-1"
+                v-on:submit.prevent="navigateToBox"
+            >
+                <label for="box">Go to box:</label>
+                <input
+                    type="number"
+                    min="1"
+                    max="1000000"
+                    v-model="boxNavigateTo"
+                />
+                <button type="submit">Go</button>
+            </form>
+        </div>
+    </div>
     <RecycleScroller
         ref="scroller"
         class="flex-grow overflow-y-auto max-h-[720px] scrollbar-hide"
